@@ -28,7 +28,7 @@ public sealed class RelayCommand : ICommand
 
     public void Execute(object? parameter)
     {
-        // A key binding can invoke the command even when the button is disabled.
+        // This is needed because a key binding can invoke the command even when the button is disabled.
         if (CanExecute(parameter))
         {
             _execute(parameter);

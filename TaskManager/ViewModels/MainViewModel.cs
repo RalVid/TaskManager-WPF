@@ -207,6 +207,7 @@ public sealed class MainViewModel : ObservableObject
         if (!wasSaved)
         {
             // Detach while undoing so the rollback does not trigger another save.
+            // Only reached when the save failed.
             task.PropertyChanged -= TaskChanged;
             task.IsCompleted = !task.IsCompleted;
             task.PropertyChanged += TaskChanged;
