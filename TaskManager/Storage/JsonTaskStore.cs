@@ -58,6 +58,7 @@ public sealed class JsonTaskStore : ITaskStore
         IReadOnlyCollection<TaskItem> tasks,
         CancellationToken cancellationToken = default)
     {
+        ValidateTasks(tasks);
         Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
         var temporaryPath = _filePath + ".tmp";
 

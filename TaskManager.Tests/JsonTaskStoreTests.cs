@@ -47,6 +47,17 @@ public sealed class JsonTaskStoreTests : IDisposable
     }
 
     [Fact]
+    public async Task Save_RejectsBlankTitleAndDoesNotWriteFile()
+    {
+        var store = new JsonTaskStore(FilePath);
+
+        await Assert.ThrowsAsync<InvalidDataException>(
+            () => store.SaveAsync(new[] { new TaskItem { Title = "  " } }));
+
+        Assert.False(File.Exists(FilePath));
+    }
+
+    [Fact]
     public async Task Save_ReplacesExistingFile()
     {
         var store = new JsonTaskStore(FilePath);
