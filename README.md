@@ -1,10 +1,10 @@
 # Task Manager
 
-A small WPF application built with MVVM (.NET 8) for creating tasks, marking them as done, deleting them and filtering by All, Done or Not done. Tasks are saved automatically as JSON.
+A small WPF application built with MVVM (.NET 10) for creating tasks, marking them as done, deleting them and filtering by All, Done or Not done. Tasks are saved automatically as JSON.
 
 ## Run
 
-Requires Windows and the .NET 8 SDK (or later).
+Requires Windows and the .NET 10 SDK (or later).
 
 ```
 dotnet run --project TaskManager
