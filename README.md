@@ -1,6 +1,6 @@
 # Task Manager
 
-A small WPF application for creating tasks, marking them as done, deleting them and filtering by All, Done or Not done. Tasks are saved automatically as JSON.
+A small WPF application built with MVVM (.NET 8) for creating tasks, marking them as done, deleting them and filtering by All, Done or Not done. Tasks are saved automatically as JSON.
 
 ## Run
 
@@ -22,6 +22,7 @@ dotnet test TaskManager.Tests
 
 ## Notes
 
+- MVVM: the view binds to `MainViewModel` through `INotifyPropertyChanged` and `ICommand`. The task list is an `ObservableCollection`.
 - Tasks are kept in an `ObservableCollection`. Filtering uses an `ICollectionView` over it, so hidden tasks are still saved.
 - Titles are trimmed and cannot be empty. Duplicate titles are allowed.
 - Data is stored in `%LOCALAPPDATA%\TaskManager\tasks.json`. Saving writes a temporary file and then replaces the original.
