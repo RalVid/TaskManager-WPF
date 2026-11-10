@@ -1,0 +1,230 @@
+<Window x:Class="TaskManager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:TaskManager.ViewModels"
+        Title="Task Manager" Width="800" Height="640" MinWidth="560" MinHeight="460"
+        FontFamily="Segoe UI" FontSize="14" Foreground="#172B36" Background="#F3F6F7"
+        WindowStartupLocation="CenterScreen" UseLayoutRounding="True">
+    <Window.Resources>
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#176A50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="22,11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="2" CornerRadius="6">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#12543F"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#0C402F"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#83D7B9"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Surface" Property="Background" Value="#E5EBE8"/>
+                                <Setter Property="Foreground" Value="#596C63"/>
+                                <Setter Property="Cursor" Value="Arrow"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DeleteButton" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#526570"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent" BorderThickness="1" CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#FDECEC"/>
+                                <Setter Property="Foreground" Value="#B42318"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#F8DADA"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#176A50"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                                <Setter Property="Cursor" Value="Arrow"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F6F8F9"/>
+            <Setter Property="Foreground" Value="#526570"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="BorderBrush" Value="#E4EAED"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#EAF4EF"/>
+                    <Setter Property="Foreground" Value="#172B36"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="BorderBrush" Value="#176A50"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding AddTaskCommand}"/>
+    </Window.InputBindings>
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="My Tasks" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Label Content="Show" Target="{Binding ElementName=FilterInput}"
+                       Foreground="#526570" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ComboBox x:Name="FilterInput" Width="126" MinHeight="34" Padding="10,5"
+                          VerticalContentAlignment="Center" AutomationProperties.Name="Filter tasks"
+                          SelectedValuePath="Tag" SelectedValue="{Binding SelectedFilter}">
+                    <ComboBoxItem Content="All" Tag="{x:Static vm:TaskFilter.All}"/>
+                    <ComboBoxItem Content="Done" Tag="{x:Static vm:TaskFilter.Completed}"/>
+                    <ComboBoxItem Content="Not done" Tag="{x:Static vm:TaskFilter.Incomplete}"/>
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="1" Background="White" BorderBrush="#DCE4E8" BorderThickness="1" CornerRadius="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <DataGrid ItemsSource="{Binding Tasks}" IsEnabled="{Binding CanEdit}"
+                              AutoGenerateColumns="False" IsReadOnly="True" Background="White" BorderThickness="0"
+                              CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"
+                              HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#EDF1F3" RowBackground="White" AlternatingRowBackground="#FAFCFC"
+                              RowHeight="50" ColumnHeaderHeight="44" SelectionMode="Single"
+                              AutomationProperties.Name="Tasks">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Task" Binding="{Binding Title}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Margin" Value="18,0"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                        <Setter Property="ToolTip" Value="{Binding Title}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                <Setter Property="Foreground" Value="#62746D"/>
+                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="Done" Width="88" SortMemberPath="IsCompleted">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <!-- A template column avoids a row edit transaction, which would block the filter refresh. -->
+                                        <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" Padding="6"
+                                                  Cursor="Hand" AutomationProperties.Name="{Binding Title}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="56" CanUserSort="False" CanUserResize="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" Style="{StaticResource DeleteButton}"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                ToolTip="Delete task" AutomationProperties.Name="{Binding Title, StringFormat='Delete task: {0}'}">
+                                            <Path Width="16" Height="18" StrokeThickness="1.5"
+                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                  Data="M3,5 L13,5 L12,17 L4,17 Z M1,3 L15,3 M6,3 L6,1 L10,1 L10,3 M6,7 L6,14 M10,7 L10,14"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEmpty}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text="No tasks to show" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Add a task below or choose another filter." Foreground="#526570" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <Border Grid.Row="1" BorderBrush="#E4EAED" BorderThickness="0,1,0,0" Padding="20,16,20,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <Label Content="New task" Target="{Binding ElementName=TitleInput}"
+                                   FontWeight="Bold" FontSize="15" Padding="0,0,0,8"/>
+                            <TextBox x:Name="TitleInput" Text="{Binding NewTitle, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding CanEdit}" Padding="10,11" BorderBrush="#B8C6CD"
+                                     VerticalContentAlignment="Center" AutomationProperties.Name="New task"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="Add task" Command="{Binding AddTaskCommand}"
+                                Style="{StaticResource PrimaryButton}" BorderBrush="Transparent"
+                                Margin="12,0,0,0" VerticalAlignment="Bottom"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <TextBlock Grid.Row="2" Text="{Binding Message}" Margin="2,14,0,0" FontSize="12"
+                   TextWrapping="Wrap" Foreground="#526570" AutomationProperties.LiveSetting="Polite"/>
+    </Grid>
+</Window>
